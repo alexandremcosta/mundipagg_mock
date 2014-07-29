@@ -13,6 +13,14 @@ describe MundipaggMock do
     MundipaggMock.calls.last[:method_name].must_equal :method
   end
 
+  describe '.clear' do
+    it 'should clear the calls array' do
+      @client.SendToService({}, :method)
+      MundipaggMock.clear
+      MundipaggMock.calls.length.must_equal 0
+    end
+  end
+
   describe '.respond_with' do
     it 'should enable setting up the responses' do
       MundipaggMock.respond_with key: "value"

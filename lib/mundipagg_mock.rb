@@ -13,6 +13,10 @@ module MundipaggMock
         end
       end
     end
+    
+    def clear
+      @calls = []
+    end
 
     def respond_with response
       self.responder = ->(hash,method){ response }
