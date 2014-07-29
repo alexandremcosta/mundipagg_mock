@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name        = 'MundipaggMock'
+  s.name        = 'mundipagg_mock'
   s.version     = '0.0.1'
   s.date        = '2014-07-29'
   s.summary     = "Mocks Mundipagg-ruby"
