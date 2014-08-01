@@ -30,12 +30,19 @@ module MundipaggMock
         MundipaggMock.build_response_hash({
           order_reference: req["mun:OrderReference"],
           credit_card_transaction_result_collection: ccs && {
-            credit_card_transactions_result: ccs.map do |t|
-              MundipaggMock.build_cc_hash({
-                transaction_reference: t["mun:TransactionReference"],
-                amount_in_cents: t["mun:AmountInCents"],
-                captured_amount_in_cents: t["mun:CapturedAmountInCents"]
-              })
+            credit_card_transactions_result: begin
+              arr = ccs.map do |t|
+                MundipaggMock.build_cc_hash({
+                  transaction_reference: t["mun:TransactionReference"],
+                  amount_in_cents: t["mun:AmountInCents"],
+                  captured_amount_in_cents: t["mun:CapturedAmountInCents"]
+                })
+              end
+              if arr.length <= 1
+                arr.first
+              else
+                arr
+              end
             end
           }
         })
