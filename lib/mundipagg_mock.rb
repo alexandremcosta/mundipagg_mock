@@ -30,7 +30,7 @@ module MundipaggMock
         MundipaggMock.build_response_hash({
           order_reference: req["mun:OrderReference"],
           credit_card_transaction_result_collection: ccs && {
-            credit_card_transactions_result: begin
+            credit_card_transaction_result: begin
               arr = ccs.map do |t|
                 MundipaggMock.build_cc_hash({
                   transaction_reference: t["mun:TransactionReference"],
