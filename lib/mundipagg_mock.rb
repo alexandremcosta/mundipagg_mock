@@ -25,10 +25,29 @@ module MundipaggMock
     def approve_all
       self.responder = ->(hash,method) do
         req = hash["tns:createOrderRequest"]
+
         ccs = req["mun:CreditCardTransactionCollection"]
         ccs = ccs && ccs["mun:CreditCardTransaction"]
+        ccs = ccs || []
+
+        bol = req["mun:BoletoTransactionCollection"]
+        bol = bol && bol["mun:BoletoTransaction"]
+        bol = bol || []
+
         MundipaggMock.build_response_hash({
           order_reference: req["mun:OrderReference"],
+          boleto_transaction_result_collection: bol && {
+            boleto_transaction_result: begin
+              arr = bol.map do |t|
+                {
+                  transaction_reference: t["mun:TransactionReference"],
+                  amount_in_cents: t["mun:AmountInCents"],
+                  nosso_numero: t["mun:NossoNumero"]
+                }
+              end
+              arr.length <= 1 ? arr.first : arr
+            end
+          }, 
           credit_card_transaction_result_collection: ccs && {
             credit_card_transaction_result: begin
               arr = ccs.map do |t|
@@ -38,11 +57,7 @@ module MundipaggMock
                   captured_amount_in_cents: t["mun:CapturedAmountInCents"]
                 })
               end
-              if arr.length <= 1
-                arr.first
-              else
-                arr
-              end
+              arr.length <= 1 ? arr.first : arr
             end
           }
         })
