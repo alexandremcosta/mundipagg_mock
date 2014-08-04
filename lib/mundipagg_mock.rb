@@ -1,11 +1,12 @@
 module MundipaggMock
   class << self
     attr_reader :calls
-    attr_accessor :responder
+    attr_accessor :responder, :boleto_url
 
     def setup
       @calls = []
       @responder = ->(hash,method){nil}
+      @boleto_url = "http://www.example.com/"
       Mundipagg::Gateway.instance_eval do
         define_method :SendToService do |hash, method|
           MundipaggMock.calls << {hash: hash, method_name: method}
@@ -39,11 +40,10 @@ module MundipaggMock
           boleto_transaction_result_collection: bol && {
             boleto_transaction_result: begin
               arr = bol.map do |t|
-                {
+                MundipaggMock.build_bol_hash({
                   transaction_reference: t["mun:TransactionReference"],
-                  amount_in_cents: t["mun:AmountInCents"],
                   nosso_numero: t["mun:NossoNumero"]
-                }
+                })
               end
               arr.length <= 1 ? arr.first : arr
             end
@@ -114,17 +114,17 @@ module MundipaggMock
       }.merge(cc)
     end
 
-    def b_hash b={}
+    def build_bol_hash b={}
       {
         amount_paid_in_cents:"0",
         bar_code: "1234567890",
-        boleto_transaction_status_enum: "Paid",
-        boleto_url: "http://www.example.com/",
+        boleto_transaction_status_enum: "Generated",
+        boleto_url: MundipaggMock.boleto_url,
         nosso_numero: "123456789",
         transaction_key: "00000000-0000-0000-0000-000000000000",
         custom_status: "Status",
         transaction_reference: "Custom Transaction Identifier"
-      }
+      }.merge(b)
     end
   end
 end
