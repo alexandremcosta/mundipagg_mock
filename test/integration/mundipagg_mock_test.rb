@@ -48,7 +48,7 @@ describe MundipaggMock do
         
         @result = @client.CreateOrder(@order)[:create_order_response][:create_order_result]
         @it = @result[:credit_card_transaction_result_collection]
-        @it = @it[:credit_card_transactions_result].first
+        @it = @it[:credit_card_transaction_result]
       end
       
       it 'should set the basic transaction infos' do
