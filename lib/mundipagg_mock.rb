@@ -14,7 +14,7 @@ module MundipaggMock
         end
       end
     end
-    
+
     def clear
       @calls = []
     end
@@ -26,6 +26,7 @@ module MundipaggMock
     def approve_all
       self.responder = ->(hash,method) do
         req = hash["tns:createOrderRequest"]
+        req ||= {}
 
         ccs = req["mun:CreditCardTransactionCollection"]
         ccs = ccs && ccs["mun:CreditCardTransaction"]
@@ -65,7 +66,11 @@ module MundipaggMock
     end
 
     def build_response_hash result={}
-      {:create_order_response=>
+      {:manage_order_response=>
+        {:manage_order_result=>
+          {:success=>true}
+        },
+       :create_order_response=>
         {:create_order_result=>
           {:buyer_key=>"00000000-0000-0000-0000-000000000000",
            :merchant_key=>"00000000-0000-0000-0000-000000000000",
@@ -88,7 +93,7 @@ module MundipaggMock
       }
     end
 
-    def build_cc_hash cc={}
+    def build_cc_hash(cc={})
       {
         :acquirer_message=>"Transação de simulação autorizada com sucesso",
         :acquirer_return_code=>"0",
